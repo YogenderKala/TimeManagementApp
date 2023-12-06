@@ -13,7 +13,6 @@ const SignIn = () => {
 
     try {
       const userCredential = await firebase.signInUser(email, password);
-      console.log(userCredential.user.email);
       navigate("/home");
     } catch (err) {
       console.log(err.message);

@@ -1,7 +1,13 @@
-import { createContext,useContext } from "react";
+import { createContext, useContext } from "react";
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut } from "firebase/auth";
-
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+} from "firebase/auth";
+import { getFirestore, collection, addDoc } from "firebase/firestore";
 const firebaseConfig = {
   apiKey: "AIzaSyCR8u1i8NGr7c_55D0aZs4769Gvrre5K5s",
   authDomain: "timemanagementapp-e3e89.firebaseapp.com",
@@ -13,15 +19,14 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 const firebaseAuth = getAuth(firebaseApp);
-
 const FirebaseContext = createContext(null);
 
-export const useFirebase = () => useContext(FirebaseContext);   //custom hook to use firebase context
+export const useFirebase = () => useContext(FirebaseContext); //custom hook to use firebase context
 
 export const FirebaseProvider = (props) => {
-
+  const db = getFirestore(firebaseApp);
   //function to sign up a new user
-  const signUpUser = async(email, password) => {
+  const signUpUser = async (email, password) => {
     return await createUserWithEmailAndPassword(firebaseAuth, email, password);
   };
 
@@ -30,11 +35,21 @@ export const FirebaseProvider = (props) => {
     return await signInWithEmailAndPassword(firebaseAuth, email, password);
   };
 
+  //funtion to sign out user
   const signOutUser = async () => {
-    return await signOut(getAuth());
-  }
+    return await signOut(firebaseAuth);
+  };
+
   return (
-    <FirebaseContext.Provider value={{ signUpUser , signInUser, signOutUser}}>
+    <FirebaseContext.Provider
+      value={{
+        signUpUser,
+        signInUser,
+        signOutUser,
+        db,
+        firebaseAuth,
+      }}
+    >
       {props.children}
     </FirebaseContext.Provider>
   );

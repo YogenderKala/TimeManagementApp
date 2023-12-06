@@ -1,4 +1,5 @@
 import { useFirebase } from "../../context/firebase";
+import { doc, setDoc } from "firebase/firestore";
 import { React, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 function SignUp() {
@@ -7,11 +8,21 @@ function SignUp() {
   const [userName, setUserName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const signUpHandler = async (event) => {
     event.preventDefault();
 
     try {
       const userCredential = await firebase.signUpUser(email, password);
+      const id = userCredential.user.uid;
+      console.log(id);
+      try {
+         await setDoc(doc(firebase.db, "users", id), {
+          username:userName,
+        });
+      } catch (err) {
+        console.error("Error adding document: ", err);
+      }
       navigate("/home");
     } catch (err) {
       console.log(err.message);
