@@ -69,13 +69,6 @@ function SideBar(props) {
           </li>
         </ul>
       </div>
-      <style jsx>
-        {`
-          .active {
-            background: rgb(71 85 105);
-          }
-        `}
-      </style>
     </div>
   );
 }
